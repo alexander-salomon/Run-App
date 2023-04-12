@@ -12,18 +12,32 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { fetchMany, initial } from "../SQL";
 import { useFocusEffect } from "@react-navigation/native";
 
+const handleDelete = (item) => {
+  //Funktion für Salodos alses
+  //löschen von dings
+};
+
 const ListItem = ({ item, onPress }) => (
   <TouchableOpacity onPress={() => onPress(item)}>
-    <View style={styles.listContainer}>
-      <Text style={styles.listText}>
-        {item.date} | {item.duration}
-      </Text>
-      <FontAwesome5
-        name={"caret-right"}
-        size={24}
-        color={"black"}
-        style={{ marginLeft: "auto", paddingRight: 8 }}
-      />
+    <View style={{ flexDirection: "row" }}>
+      <TouchableOpacity onPress={handleDelete}>
+        <View style={{ paddingRight: 12 }}>
+          <View style={styles.iconDelete}>
+            <FontAwesome5 name={"times"} size={20} color={"red"} />
+          </View>
+        </View>
+      </TouchableOpacity>
+      <View style={styles.listContainer}>
+        <Text style={styles.listText}>
+          {item.date} | {item.duration}
+        </Text>
+        <FontAwesome5
+          name={"caret-right"}
+          size={24}
+          color={"black"}
+          style={{ marginLeft: "auto", paddingRight: 8 }}
+        />
+      </View>
     </View>
   </TouchableOpacity>
 );
@@ -44,6 +58,7 @@ const UserData = ({ navigation }) => {
     console.log(item);
     navigation.navigate("RunData", { item: item });
   };
+
   useFocusEffect(
     React.useCallback(() => {
       fetchMany("Saved_Run")
@@ -79,7 +94,7 @@ const UserData = ({ navigation }) => {
               style={styles.headerIcon}
             />
 
-            <Text style={styles.header1}>Go Back</Text>
+            <Text style={styles.header1}>Back</Text>
           </View>
         </TouchableOpacity>
         <Text style={styles.headerChild}>Previous runs</Text>
@@ -104,13 +119,22 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     flexDirection: "row",
     alignItems: "center",
+    width: "87%",
   },
   listText: {
     //fontFamily: "Montserrat-Medium",
     fontSize: 16,
     fontWeight: "400",
-
     padding: 8,
+  },
+
+  iconDelete: {
+    backgroundColor: "#fff",
+    borderRadius: 100,
+    width: 32,
+    height: 32,
+    justifyContent: "center",
+    paddingLeft: 9,
   },
 
   container: {

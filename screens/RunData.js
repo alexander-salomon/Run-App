@@ -58,6 +58,19 @@ const HomeScreen = ({ navigation, route }) => {
       }}
     >
       <View style={styles.container}>
+        <TouchableOpacity onPress={() => navigation.navigate("UserData")}>
+          <View style={styles.rowContainer}>
+            <FontAwesome5
+              name={"caret-left"}
+              size={32}
+              color={"#fff"}
+              style={styles.headerIcon}
+            />
+
+            <Text style={styles.header1}>Back</Text>
+          </View>
+        </TouchableOpacity>
+
         <View
           style={[
             styles.rowContainer,
@@ -77,7 +90,7 @@ const HomeScreen = ({ navigation, route }) => {
           </View>
         </View>
         <View style={styles.bigBox}>
-          <Text>{item.duration}</Text>
+          <Text style={styles.bigBoxText}>{item.duration}</Text>
         </View>
       </View>
       <View
@@ -121,30 +134,26 @@ const HomeScreen = ({ navigation, route }) => {
 
 export default HomeScreen;
 
-const options = {
-  container: {
-    padding: 5,
-    borderRadius: 5,
-    width: 200,
+const styles = StyleSheet.create({
+  rowContainer: {
+    flexDirection: "row",
     alignItems: "center",
   },
-  text: {
-    fontWeight: "bold",
-    fontSize: 25,
-    color: "#000",
-    marginLeft: 7,
-  },
-};
 
-const styles = StyleSheet.create({
+  headerIcon: {
+    marginRight: 8,
+  },
+
+  header1: {
+    //fontFamily: "Montserrat-Bold",
+    fontSize: 32,
+    color: "#fff",
+    fontWeight: "bold",
+  },
   container: {
     paddingLeft: 16,
     paddingRight: 16,
     backgroundColor: "#FF7B44",
-  },
-
-  rowContainer: {
-    flexDirection: "row",
   },
 
   header1: {
@@ -180,7 +189,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
   },
-
+  bigBoxText: {
+    fontSize: 32,
+    fontWeight: "bold",
+  },
   bigBox: {
     backgroundColor: "#fff",
     alignItems: "center",
