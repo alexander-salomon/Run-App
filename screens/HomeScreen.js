@@ -9,6 +9,7 @@ import * as React from "react";
 import { useState } from "react";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import MapView, { Polyline } from "react-native-maps";
+import haversine from "haversine";
 import GetLocation from "react-native-get-location";
 import { PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
@@ -40,6 +41,8 @@ const HomeScreen = ({ navigation }) => {
   const [location2, setLocation2] = useState({ latitude: 0, longitude: 0 });
 
   var RunningVar = IsRunnning;
+  var tempDistance = 0;
+  var distance = 0;
 
   const getLocation = async (isRunningVar, locations_t) => {
     const promise = new Promise(async (resolve, reject) => {
@@ -60,8 +63,28 @@ const HomeScreen = ({ navigation }) => {
             longitude: location.coords.longitude,
           });
 
-          //setLocations(temp_locations);
-          resolve(location.coords, temp_locations);
+          if (temp_locations.length > 2) {
+            var start = {
+              latitude: temp_locations[temp_locations.length - 2].latitude,
+              longitude: temp_locations[temp_locations.length - 2].longitude,
+            };
+
+            var end = {
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            };
+
+            tempDistance =
+              tempDistance + haversine(start, end, { unit: "meter" });
+            distance = tempDistance.toFixed(1);
+            console.log(tempDistance);
+          }
+
+          setLocations(temp_locations);
+          setDistanceButton("" + distance + " m");
+          console.log(temp_locations);
+          var data = [location.coords, temp_locations, distance];
+          resolve(data);
         }
       } catch (msg) {
         reject(msg);
@@ -73,8 +96,8 @@ const HomeScreen = ({ navigation }) => {
 
   React.useEffect(() => {
     const interval = setInterval(() => {
-      getLocation(RunningVar, locations).then((result1, result2) => {
-        console.log("    ffsdfsdgs:  " + result1 + "    vkdjhfl: " + result2);
+      getLocation(RunningVar, locations).then((result) => {
+        console.log(result);
       });
     }, 10000);
 
@@ -97,8 +120,6 @@ const HomeScreen = ({ navigation }) => {
   }, []);
 
   const startRunning = () => {
-    console.log(locations);
-    console.log(IsRunnning);
     if (IsRunnning == true) {
       setLocations([]);
       lol = false;
