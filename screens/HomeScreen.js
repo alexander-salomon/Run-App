@@ -166,7 +166,7 @@ const HomeScreen = ({ navigation }) => {
       setIsRunnning(true);
       setStartButton("Stop Runnning");
       setDistanceButton(0);
-      setPaceButton("min/km");
+      setPaceButton(CurrentTime / Distance + "min/km");
       setIsStopwatchStart(!isStopwatchStart);
       setResetStopwatch(false);
       setLocations([]);
