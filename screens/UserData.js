@@ -9,40 +9,11 @@ import React from "react";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { fetchMany, initial } from "../SQL";
+import { fetchMany, deleteOne } from "../SQL";
 import { useFocusEffect } from "@react-navigation/native";
 
-const handleDelete = (item) => {
-  //Funktion für Salodos alses
-  //löschen von dings
-};
-
-const ListItem = ({ item, onPress }) => (
-  <TouchableOpacity onPress={() => onPress(item)}>
-    <View style={{ flexDirection: "row" }}>
-      <TouchableOpacity onPress={handleDelete}>
-        <View style={{ paddingRight: 12 }}>
-          <View style={styles.iconDelete}>
-            <FontAwesome5 name={"times"} size={20} color={"red"} />
-          </View>
-        </View>
-      </TouchableOpacity>
-      <View style={styles.listContainer}>
-        <Text style={styles.listText}>
-          {item.date} | {item.duration}
-        </Text>
-        <FontAwesome5
-          name={"caret-right"}
-          size={24}
-          color={"black"}
-          style={{ marginLeft: "auto", paddingRight: 8 }}
-        />
-      </View>
-    </View>
-  </TouchableOpacity>
-);
-
 const UserData = ({ navigation }) => {
+  const [refresh, setRefresh] = useState(false);
   const [data, setData] = useState([
     {
       id: "1",
@@ -53,6 +24,44 @@ const UserData = ({ navigation }) => {
       distance: "20",
     },
   ]);
+  const handleDelete = (item) => {
+    deleteOne("Saved_Run", item.DataID).then(() => {
+      fetchMany("Path").then((result) => {
+        var i = 0;
+        for (i = 0; i < result.length; i++) {
+          if (result[i].RunId == item.DataID) {
+            deleteOne("Path", result[i].id);
+          }
+        }
+        setRefresh(!refresh);
+      });
+    });
+  };
+
+  const ListItem = ({ item, onPress }) => (
+    <TouchableOpacity onPress={() => onPress(item)}>
+      <View style={{ flexDirection: "row" }}>
+        <TouchableOpacity onPress={() => handleDelete(item)}>
+          <View style={{ paddingRight: 12 }}>
+            <View style={styles.iconDelete}>
+              <FontAwesome5 name={"times"} size={20} color={"red"} />
+            </View>
+          </View>
+        </TouchableOpacity>
+        <View style={styles.listContainer}>
+          <Text style={styles.listText}>
+            {item.date} | {item.duration}
+          </Text>
+          <FontAwesome5
+            name={"caret-right"}
+            size={24}
+            color={"black"}
+            style={{ marginLeft: "auto", paddingRight: 8 }}
+          />
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 
   const handlePress = (item) => {
     console.log(item);
@@ -79,7 +88,7 @@ const UserData = ({ navigation }) => {
           setData(dataArray);
         })
         .catch((error) => console.error(error));
-    }, [])
+    }, [refresh])
   );
 
   return (

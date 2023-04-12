@@ -87,7 +87,7 @@ const HomeScreen = ({ navigation }) => {
   }, []);
 
   React.useEffect(() => {
-    const getLocation = async () => {
+    const getLocation2 = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         console.log("Permission to access location was denied");
@@ -104,7 +104,7 @@ const HomeScreen = ({ navigation }) => {
       setLocations(temp_locations);
     };
 
-    getLocation();
+    getLocation2();
   }, []);
 
   const startRunning = () => {
@@ -159,6 +159,7 @@ const HomeScreen = ({ navigation }) => {
       setResetStopwatch(false);
       setLocations([]);
     }
+    console.log("here:" + IsRunnning);
   };
 
   return (
