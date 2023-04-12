@@ -35,56 +35,51 @@ const HomeScreen = ({ navigation }) => {
   const [resetStopwatch, setResetStopwatch] = useState(false);
 
   const [userLocation, setUserLocation] = useState(null);
+  const [stroke, setStroke] = useState(5);
 
   const [location2, setLocation2] = useState({ latitude: 0, longitude: 0 });
 
-  const getLocation = async () => {
-    console.log(IsRunnning);
-    if (IsRunnning == true) {
-      console.log("Getting Location");
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Permission to access location was denied");
-        return;
+  var RunningVar = IsRunnning;
+
+  const getLocation = async (isRunningVar, locations_t) => {
+    const promise = new Promise(async (resolve, reject) => {
+      try {
+        console.log("locations: " + locations_t);
+        if (isRunningVar == true) {
+          console.log("Getting Location");
+          let { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== "granted") {
+            console.log("Permission to access location was denied");
+            return;
+          }
+          let location = await Location.getCurrentPositionAsync({});
+          //setLocation2(location.coords);
+          let temp_locations = locations_t;
+          temp_locations.push({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          });
+
+          //setLocations(temp_locations);
+          resolve(location.coords, temp_locations);
+        }
+      } catch (msg) {
+        reject(msg);
       }
+    });
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation2(location.coords);
-      let temp_locations = locations;
-      //var oldLat = locations[locations.length].latitude;
-      //var oldLon = locations[locations.length].longitude;
-      temp_locations.push({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
-      setLocations(temp_locations);
-
-      // const R = 6371e3; // metres
-      // const φ1 = (oldLat * Math.PI) / 180; // φ, λ in radians
-      // const φ2 = (location.coords.latitude * Math.PI) / 180;
-      // const Δφ = ((location.coords.latitude - oldLat) * Math.PI) / 180;
-      // const Δλ = ((location.coords.longitude - oldLon) * Math.PI) / 180;
-
-      // const a =
-      //   Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-      //   Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-      // const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-      // const d = R * c; // in metres
-      // setDistanceButton(DistanceButton + d);
-
-      // var pace = CurrentTime / (DistanceButton + d);
-      // setPaceButton(pace + "min/km");
-    }
+    return promise;
   };
 
   React.useEffect(() => {
     const interval = setInterval(() => {
-      getLocation();
+      getLocation(RunningVar, locations).then((result1, result2) => {
+        console.log("    ffsdfsdgs:  " + result1 + "    vkdjhfl: " + result2);
+      });
     }, 10000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [RunningVar, locations]);
 
   React.useEffect(() => {
     const getLocation2 = async () => {
@@ -96,21 +91,17 @@ const HomeScreen = ({ navigation }) => {
 
       let location = await Location.getCurrentPositionAsync({});
       setLocation2(location.coords);
-      let temp_locations = locations;
-      temp_locations.push({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
-      setLocations(temp_locations);
     };
 
     getLocation2();
   }, []);
 
   const startRunning = () => {
+    console.log(locations);
     console.log(IsRunnning);
     if (IsRunnning == true) {
-      getLocation();
+      setLocations([]);
+      lol = false;
       const date = new Date();
       const day = date.getDate();
       const month = date.toLocaleString("default", { month: "short" });
@@ -133,7 +124,6 @@ const HomeScreen = ({ navigation }) => {
           console.log(locations);
           var x = 0;
           for (x = 0; x < locations.length; x++) {
-            console.log();
             insertOne("Path", {
               Latitude: locations[x].latitude,
               Longitude: locations[x].longitude,
@@ -150,7 +140,8 @@ const HomeScreen = ({ navigation }) => {
         setResetStopwatch(true);
       });
     } else {
-      getLocation();
+      lol = true;
+      //getLocation();
       setIsRunnning(true);
       setStartButton("Stop Runnning");
       setDistanceButton(0);
@@ -159,7 +150,6 @@ const HomeScreen = ({ navigation }) => {
       setResetStopwatch(false);
       setLocations([]);
     }
-    console.log("here:" + IsRunnning);
   };
 
   return (
@@ -250,15 +240,13 @@ const HomeScreen = ({ navigation }) => {
               latitude: location.latitude,
               longitude: location.longitude,
             }))}
-            strokeWidth={5}
+            strokeWidth={stroke}
             strokeColor={"#4c8bf5"}
           />
           <MapViewDirections
             origin={locations[0]}
             destination={locations[1]}
             apikey={GOOGLE_MAPS_APIKEY}
-            strokeWidth={5}
-            strokeColor="hotpink"
           />
         </MapView>
       </View>
