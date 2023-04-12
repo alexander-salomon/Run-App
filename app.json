@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "RunItProject",
+    "slug": "RunItProject",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "config": {
+        "googleMapsApiKey": "AIzaSyA5pKR19AiLn7-Xi25msy1Y8Q9-X5FtIxY"
+      },
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app uses the camera to scan barcodes on event tickets.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "true"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
